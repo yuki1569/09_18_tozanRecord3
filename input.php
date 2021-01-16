@@ -1,24 +1,12 @@
 <?php
 session_start();
 include("functions.php");
+$pdo = connect_to_db();
 check_session_id();
-// require_once 'functions.php';
-// DB接続情報//作成したデータベース名を指定
-$dbn = 'mysql:dbname=gsacf_d07_18;charset=utf8;port=3306;host=localhost';
-$user = 'root';
-$pwd = '';
-
-// DB接続
-try {
-  $pdo = new PDO($dbn, $user, $pwd);
-} catch (PDOException $e) {
-  echo json_encode(["db error" => "{$e->getMessage()}"]);
-  exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   // 画像を取得
-  $sql = 'SELECT * FROM images ORDER BY created_at DESC';
+  $sql = 'SELECT * FROM tozan_record_table ORDER BY created_at DESC';
   $stmt = $pdo->prepare($sql);
   $stmt->execute();
   $images = $stmt->fetchAll();
@@ -79,7 +67,7 @@ unset($pdo);
               <!-- <img class="image-button" src="image.php?id=<?= $images[$i]['image_id']; ?>" data-id="<?= $images[$i]['image_id'] ?>" width="500px" height="auto" class="mr-3"> -->
 
               <a href="#lightbox" data-toggle="modal" data-slide-to="<?= $i; ?>">
-                <img src="image.php?id=<?= $images[$i]['image_id']; ?>" data-id="<?= $images[$i]['image_id'] ?>" width="500px" height="auto" class="mr-3">
+                <img src="images/<?php echo $images[$i]['image_name']; ?>" data-id="<?= $images[$i]['image_id'] ?>" width="500px" height="auto" class="mr-3">
               </a>
 
               <div class="media-body">

@@ -1,23 +1,12 @@
 <?php
 session_start();
 include("functions.php");
+$pdo = connect_to_db();
 check_session_id();
-// DB接続情報//作成したデータベース名を指定
-$dbn = 'mysql:dbname=gsacf_d07_18;charset=utf8;port=3306;host=localhost';
-$user = 'root';
-$pwd = '';
-
-// DB接続
-try {
-  $pdo = new PDO($dbn, $user, $pwd);
-} catch (PDOException $e) {
-  echo json_encode(["db error" => "{$e->getMessage()}"]);
-  exit();
-}
 
 $id = $_GET['id'];
 //:idはユーザーから送られてきたidデータ
-$sql = 'SELECT * FROM images WHERE image_id=:id';
+$sql = 'SELECT * FROM tozan_record_table WHERE image_id=:id';
 $stmt = $pdo->prepare($sql);
 //送られてきたidをバインド変数にする
 $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -40,7 +29,10 @@ if ($status == false) {
 <body style="max-width: 700px; margin: 0 auto;">
   <a href="input.php">戻る</a>
   <div style="text-align:center">
-    <img src="image.php?id=<?= $record['image_id']; ?>" width="500px" height="auto">
+
+  <img
+    src="images/<?php echo $record['image_name']; ?>"
+    width="500px" height="auto">
   </div>
 
   <!-- 写真をupすときはenctype="multipart/form-data"が必要みたい -->

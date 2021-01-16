@@ -1,17 +1,6 @@
 <?php
-// DB接続情報//作成したデータベース名を指定
-$dbn = 'mysql:dbname=gsacf_d07_18;charset=utf8;port=3306;host=localhost';
-$user = 'root';
-$pwd = '';
-
-// DB接続
-try {
-  $pdo = new PDO($dbn, $user, $pwd);
-} catch (PDOException $e) {
-  echo json_encode(["db error" => "{$e->getMessage()}"]);
-  exit();
-}
-
+include("functions.php");
+$pdo = connect_to_db();
 print_r($_POST) . PHP_EOL;
 print_r($_FILES) . PHP_EOL;
 // exit();
@@ -41,19 +30,20 @@ $time = $_POST['time'];
 $distance = $_POST['distance'];
 $maximumAltitude = $_POST['maximumAltitude'];
 
-$sql = 'INSERT INTO images(image, created_at,name,date,time,distance,maximumAltitude)  VALUES (:image_name, :image_type, :image_content, :image_size, now(),:name,:date,:time,:distance,:maximumAltitude)';
+$sql = 'INSERT INTO tozan_record_table
+(image_name, created_at,name,date,time,distance,maximumAltitude)
+VALUES (:image,now(),:name,:date,:time,:distance,:maximumAltitude)';
 
 
 $stmt = $pdo->prepare($sql);
-$stmt->bindValue(':image_name', $image_name, PDO::PARAM_STR);
-$stmt->bindValue(':image_type', $image_type, PDO::PARAM_STR);
-$stmt->bindValue(':image_content', $image_content, PDO::PARAM_STR);
-$stmt->bindValue(':image_size', $image_size, PDO::PARAM_INT);
+$stmt->bindValue(':image', $image, PDO::PARAM_STR);
 $stmt->bindValue(':name', $name, PDO::PARAM_STR);
 $stmt->bindValue(':date', $date, PDO::PARAM_STR);
 $stmt->bindValue(':time', $time, PDO::PARAM_STR);
 $stmt->bindValue(':distance', $distance, PDO::PARAM_STR);
 $stmt->bindValue(':maximumAltitude', $maximumAltitude, PDO::PARAM_STR);
+move_uploaded_file($_FILES['image']['tmp_name'], './images/' . $image);//imagesディレクトリにファイル保存
+
 $stmt->execute();
 // }
 unset($pdo);

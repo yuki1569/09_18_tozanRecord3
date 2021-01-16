@@ -1,16 +1,6 @@
 <?php
-// DB接続情報//作成したデータベース名を指定
-$dbn = 'mysql:dbname=gsacf_d07_18;charset=utf8;port=3306;host=localhost';
-$user = 'root';
-$pwd = '';
-
-// DB接続
-try {
-  $pdo = new PDO($dbn, $user, $pwd);
-} catch (PDOException $e) {
-  echo json_encode(["db error" => "{$e->getMessage()}"]);
-  exit();
-}
+include("functions.php");
+$pdo = connect_to_db();
 
 // $id = $_GET['id'];
 // //:idはユーザーから送られてきたidデータ

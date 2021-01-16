@@ -2,21 +2,10 @@
 session_start();
 include("functions.php");
 check_session_id();
-// DB接続情報//作成したデータベース名を指定
-$dbn = 'mysql:dbname=gsacf_d07_18;charset=utf8;port=3306;host=localhost';
-$user = 'root';
-$pwd = '';
-
-// DB接続
-try {
-  $pdo = new PDO($dbn, $user, $pwd);
-} catch (PDOException $e) {
-  echo json_encode(["db error" => "{$e->getMessage()}"]);
-  exit();
-}
+$pdo = connect_to_db();
 
 // 参照はSELECT文！
-$sql = 'SELECT * FROM images';
+$sql = 'SELECT * FROM tozan_record_table';
 $stmt = $pdo->prepare($sql);
 $status = $stmt->execute();
 // $statusにSQLの実行結果が入る（取得したデータではない点に注意）
@@ -41,7 +30,7 @@ if ($status == false) {
 }
 
 //歩行距離の合計
-$sql = 'SELECT  SUM(distance) FROM images';
+$sql = 'SELECT  SUM(distance) FROM tozan_record_table';
 $stmt = $pdo->prepare($sql);
 $status = $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -51,7 +40,7 @@ foreach ($result as $record) {
   $totalDistance = $record['SUM(distance)'];
 }
 //レコードの合計
-$sql = 'SELECT  COUNT(*) FROM images';
+$sql = 'SELECT  COUNT(*) FROM tozan_record_table';
 $stmt = $pdo->prepare($sql);
 $status = $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -79,7 +68,7 @@ foreach ($result as $record) {
 
 //日にち順に並び替え
 if (isset($_POST['sort-date'])) {
-  $sql = 'SELECT * FROM images ORDER BY date DESC';
+  $sql = 'SELECT * FROM tozan_record_table ORDER BY date DESC';
   $stmt = $pdo->prepare($sql);
   $status = $stmt->execute();
   if ($status == false) {
@@ -100,7 +89,7 @@ if (isset($_POST['sort-date'])) {
   }
   //活動時間で並び替え
 } elseif (isset($_POST['sort-time'])) {
-  $sql = 'SELECT * FROM images ORDER BY time DESC';
+  $sql = 'SELECT * FROM tozan_record_table ORDER BY time DESC';
   $stmt = $pdo->prepare($sql);
   $status = $stmt->execute();
   if ($status == false) {
@@ -120,7 +109,7 @@ if (isset($_POST['sort-date'])) {
     }
   }
 } elseif (isset($_POST['sort-elevation'])) {
-  $sql = 'SELECT * FROM images ORDER BY maximumAltitude DESC';
+  $sql = 'SELECT * FROM tozan_record_table ORDER BY maximumAltitude DESC';
   $stmt = $pdo->prepare($sql);
   $status = $stmt->execute();
   if ($status == false) {
@@ -141,7 +130,7 @@ if (isset($_POST['sort-date'])) {
   }
 }
  elseif (isset($_POST['sort-distance'])) {
-  $sql = 'SELECT * FROM images ORDER BY distance DESC';
+  $sql = 'SELECT * FROM tozan_record_table ORDER BY distance DESC';
   $stmt = $pdo->prepare($sql);
   $status = $stmt->execute();
   if ($status == false) {
